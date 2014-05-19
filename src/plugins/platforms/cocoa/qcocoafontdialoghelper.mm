@@ -108,7 +108,7 @@ static QFont qfontForCocoaFont(NSFont *cocoaFont, const QFont &resolveFont)
 
 @class QT_MANGLE_NAMESPACE(QNSFontPanelDelegate);
 
-@interface QT_MANGLE_NAMESPACE(QNSFontPanelDelegate) : NSObject<NSWindowDelegate>
+@interface QT_MANGLE_NAMESPACE(QNSFontPanelDelegate) : NSObject
 {
     @public
     NSFontPanel *mFontPanel;

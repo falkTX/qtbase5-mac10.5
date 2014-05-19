@@ -366,7 +366,7 @@ static void cleanupCocoaApplicationDelegate()
 */
 }
 
-- (void)setReflectionDelegate:(NSObject <NSApplicationDelegate> *)oldDelegate
+- (void)setReflectionDelegate:(NSObject *)oldDelegate
 {
     [oldDelegate retain];
     [reflectionDelegate release];

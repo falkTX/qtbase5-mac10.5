@@ -69,7 +69,7 @@ static NSButton *macCreateButton(const char *text, NSView *superview)
 
 @class QT_MANGLE_NAMESPACE(QNSColorPanelDelegate);
 
-@interface QT_MANGLE_NAMESPACE(QNSColorPanelDelegate) : NSObject<NSWindowDelegate>
+@interface QT_MANGLE_NAMESPACE(QNSColorPanelDelegate) : NSObject
 {
     @public
     NSColorPanel *mColorPanel;

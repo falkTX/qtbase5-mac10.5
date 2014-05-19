@@ -128,7 +128,7 @@ QT_USE_NAMESPACE
 -(void)mousePressed:(NSEvent *)mouseEvent button:(Qt::MouseButton)mouseButton;
 @end
 
-@interface QT_MANGLE_NAMESPACE(QNSMenu) : NSMenu <NSMenuDelegate> {
+@interface QT_MANGLE_NAMESPACE(QNSMenu) : NSMenu {
     QPlatformMenu *qmenu;
 }
 -(QPlatformMenu*)menu;

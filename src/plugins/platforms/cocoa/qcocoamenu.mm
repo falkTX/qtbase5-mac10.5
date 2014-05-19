@@ -79,7 +79,7 @@ static inline QCocoaMenuLoader *getMenuLoader()
     return [NSApp QT_MANGLE_NAMESPACE(qt_qcocoamenuLoader)];
 }
 
-@interface QT_MANGLE_NAMESPACE(QCocoaMenuDelegate) : NSObject <NSMenuDelegate> {
+@interface QT_MANGLE_NAMESPACE(QCocoaMenuDelegate) : NSObject {
     QCocoaMenu *m_menu;
 }
 
@@ -248,18 +248,12 @@ void QCocoaMenu::setText(const QString &text)
     [m_nativeItem setTitle:QCFString::toNSString(stripped)];
 }
 
-void QCocoaMenu::setMinimumWidth(int width)
+void QCocoaMenu::setMinimumWidth(int)
 {
-    m_nativeMenu.minimumWidth = width;
 }
 
-void QCocoaMenu::setFont(const QFont &font)
+void QCocoaMenu::setFont(const QFont&)
 {
-    if (font.resolve()) {
-        NSFont *customMenuFont = [NSFont fontWithName:QCFString::toNSString(font.family())
-                                  size:font.pointSize()];
-        m_nativeMenu.font = customMenuFont;
-    }
 }
 
 void QCocoaMenu::insertMenuItem(QPlatformMenuItem *menuItem, QPlatformMenuItem *before)
@@ -452,7 +446,7 @@ void QCocoaMenu::showPopup(const QWindow *parentWindow, QPoint pos, const QPlatf
         [popupCell setTransparent:YES];
         [popupCell setMenu:m_nativeMenu];
         [popupCell selectItem:nsItem];
-        NSRect cellFrame = NSMakeRect(pos.x(), pos.y(), m_nativeMenu.minimumWidth, 10);
+        NSRect cellFrame = NSMakeRect(pos.x(), pos.y(), 50, 10);
         [popupCell performClickWithFrame:cellFrame inView:view];
     } else {
         // Else, we need to transform 'pos' to window or screen coordinates.
@@ -478,8 +472,6 @@ void QCocoaMenu::showPopup(const QWindow *parentWindow, QPoint pos, const QPlatf
                                         clickCount:1
                                         pressure:1.0];
             [NSMenu popUpContextMenu:m_nativeMenu withEvent:menuEvent forView:view];
-        } else {
-            [m_nativeMenu popUpMenuPositioningItem:nsItem atLocation:nsPos inView:0];
         }
     }
 
