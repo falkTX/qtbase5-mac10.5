@@ -50,43 +50,4 @@
 #undef slots
 #include <Cocoa/Cocoa.h>
 
-QT_BEGIN_NAMESPACE
-
-class QCocoaGLContext : public QPlatformOpenGLContext
-{
-public:
-    QCocoaGLContext(const QSurfaceFormat &format, QPlatformOpenGLContext *share);
-    ~QCocoaGLContext();
-
-    QSurfaceFormat format() const;
-
-    void swapBuffers(QPlatformSurface *surface);
-
-    bool makeCurrent(QPlatformSurface *surface);
-    void doneCurrent();
-
-    void (*getProcAddress(const QByteArray &procName)) ();
-
-    void update();
-
-    static NSOpenGLPixelFormat *createNSOpenGLPixelFormat(const QSurfaceFormat &format);
-    NSOpenGLContext *nsOpenGLContext() const;
-
-    bool isSharing() const;
-    bool isValid() const;
-
-    void windowWasHidden();
-
-private:
-    void setActiveWindow(QWindow *window);
-    void updateSurfaceFormat();
-
-    NSOpenGLContext *m_context;
-    NSOpenGLContext *m_shareContext;
-    QSurfaceFormat m_format;
-    QPointer<QWindow> m_currentWindow;
-};
-
-QT_END_NAMESPACE
-
 #endif // QCOCOAGLCONTEXT_H

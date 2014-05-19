@@ -47,7 +47,6 @@
 #include "qcocoawindow.h"
 #include "qcocoahelpers.h"
 #include "qcocoaautoreleasepool.h"
-#include "qmultitouch_mac_p.h"
 #include "qcocoadrag.h"
 #include "qmacmime.h"
 #include <qpa/qplatformintegration.h>
@@ -57,7 +56,6 @@
 #include <QtCore/QDebug>
 #include <private/qguiapplication_p.h>
 #include "qcocoabackingstore.h"
-#include "qcocoaglcontext.h"
 #include "qcocoaintegration.h"
 
 #ifdef QT_COCOA_ENABLE_ACCESSIBILITY_INSPECTOR
@@ -153,11 +151,6 @@ static QTouchDevice *touchDevice = 0;
 - (void) setQCocoaGLContext:(QCocoaGLContext *)context
 {
     m_glContext = context;
-    [m_glContext->nsOpenGLContext() setView:self];
-    if (![m_glContext->nsOpenGLContext() view]) {
-        //was unable to set view
-        m_shouldSetGLContextinDrawRect = true;
-    }
 
     if (!m_subscribesForGlobalFrameNotifications) {
         // NSOpenGLContext expects us to repaint (or update) the view when
@@ -403,11 +396,6 @@ static QTouchDevice *touchDevice = 0;
 
 - (void) drawRect:(NSRect)dirtyRect
 {
-    if (m_glContext && m_shouldSetGLContextinDrawRect) {
-        [m_glContext->nsOpenGLContext() setView:self];
-        m_shouldSetGLContextinDrawRect = false;
-    }
-
     if (m_platformWindow->m_drawContentBorderGradient)
         NSDrawWindowBackground(dirtyRect);
 
@@ -961,34 +949,6 @@ static QTabletEvent::TabletDevice wacomTabletDevice(NSEvent *theEvent)
     }
 }
 
-- (void)touchesBeganWithEvent:(NSEvent *)event
-{
-    const NSTimeInterval timestamp = [event timestamp];
-    const QList<QWindowSystemInterface::TouchPoint> points = QCocoaTouch::getCurrentTouchPointList(event, /*acceptSingleTouch= ### true or false?*/false);
-    QWindowSystemInterface::handleTouchEvent(m_window, timestamp * 1000, touchDevice, points);
-}
-
-- (void)touchesMovedWithEvent:(NSEvent *)event
-{
-    const NSTimeInterval timestamp = [event timestamp];
-    const QList<QWindowSystemInterface::TouchPoint> points = QCocoaTouch::getCurrentTouchPointList(event, /*acceptSingleTouch= ### true or false?*/false);
-    QWindowSystemInterface::handleTouchEvent(m_window, timestamp * 1000, touchDevice, points);
-}
-
-- (void)touchesEndedWithEvent:(NSEvent *)event
-{
-    const NSTimeInterval timestamp = [event timestamp];
-    const QList<QWindowSystemInterface::TouchPoint> points = QCocoaTouch::getCurrentTouchPointList(event, /*acceptSingleTouch= ### true or false?*/false);
-    QWindowSystemInterface::handleTouchEvent(m_window, timestamp * 1000, touchDevice, points);
-}
-
-- (void)touchesCancelledWithEvent:(NSEvent *)event
-{
-    const NSTimeInterval timestamp = [event timestamp];
-    const QList<QWindowSystemInterface::TouchPoint> points = QCocoaTouch::getCurrentTouchPointList(event, /*acceptSingleTouch= ### true or false?*/false);
-    QWindowSystemInterface::handleTouchEvent(m_window, timestamp * 1000, touchDevice, points);
-}
-
 #ifndef QT_NO_GESTURES
 //#define QT_COCOA_ENABLE_GESTURE_DEBUG
 - (void)magnifyWithEvent:(NSEvent *)event
@@ -996,12 +956,6 @@ static QTabletEvent::TabletDevice wacomTabletDevice(NSEvent *theEvent)
 #ifdef QT_COCOA_ENABLE_GESTURE_DEBUG
     qDebug() << "magnifyWithEvent" << [event magnification];
 #endif
-    const NSTimeInterval timestamp = [event timestamp];
-    QPointF windowPoint;
-    QPointF screenPoint;
-    [self convertFromScreen:[NSEvent mouseLocation] toWindowPoint:&windowPoint andScreenPoint:&screenPoint];
-    QWindowSystemInterface::handleGestureEventWithRealValue(m_window, timestamp, Qt::ZoomNativeGesture,
-                                                            [event magnification], windowPoint, screenPoint);
 }
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8

@@ -53,8 +53,6 @@
 #include <qpixmap.h>
 #include <qpa/qplatformwindow.h>
 #include "qsurfaceformat.h"
-#include <qpa/qplatformopenglcontext.h>
-#include "qopenglcontext.h"
 #include "qguiapplication.h"
 #include <qdebug.h>
 
@@ -90,7 +88,7 @@ void *QCocoaNativeInterface::nativeResourceForWindow(const QByteArray &resourceS
         return 0;
 
     if (resourceString == "nsopenglcontext") {
-        return static_cast<QCocoaWindow *>(window->handle())->currentContext()->nsOpenGLContext();
+        return 0;
     } else if (resourceString == "nsview") {
         return static_cast<QCocoaWindow *>(window->handle())->m_contentView;
     } else if (resourceString == "nswindow") {
@@ -198,12 +196,6 @@ void *QCocoaNativeInterface::cglContextForContext(QOpenGLContext* context)
 
 void *QCocoaNativeInterface::nsOpenGLContextForContext(QOpenGLContext* context)
 {
-    if (context) {
-        QCocoaGLContext *cocoaGLContext = static_cast<QCocoaGLContext *>(context->handle());
-        if (cocoaGLContext) {
-            return cocoaGLContext->nsOpenGLContext();
-        }
-    }
     return 0;
 }
 
