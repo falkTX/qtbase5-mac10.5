@@ -392,23 +392,6 @@ static QString macFormatCurrency(const QSystemLocale::CurrencyToStringArgument &
 
 static QVariant macQuoteString(QSystemLocale::QueryType type, const QStringRef &str)
 {
-    if (QSysInfo::MacintoshVersion < QSysInfo::MV_10_6)
-        return QVariant();
-
-    QString begin, end;
-    QCFType<CFLocaleRef> locale = CFLocaleCopyCurrent();
-    switch (type) {
-    case QSystemLocale::StringToStandardQuotation:
-        begin = QCFString::toQString(static_cast<CFStringRef>(CFLocaleGetValue(locale, kCFLocaleQuotationBeginDelimiterKey)));
-        end = QCFString::toQString(static_cast<CFStringRef>(CFLocaleGetValue(locale, kCFLocaleQuotationEndDelimiterKey)));
-        return QString(begin % str % end);
-    case QSystemLocale::StringToAlternateQuotation:
-        begin = QCFString::toQString(static_cast<CFStringRef>(CFLocaleGetValue(locale, kCFLocaleAlternateQuotationBeginDelimiterKey)));
-        end = QCFString::toQString(static_cast<CFStringRef>(CFLocaleGetValue(locale, kCFLocaleAlternateQuotationEndDelimiterKey)));
-        return QString(begin % str % end);
-     default:
-        break;
-    }
     return QVariant();
 }
 #endif //QT_NO_SYSTEMLOCALE

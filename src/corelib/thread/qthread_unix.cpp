@@ -289,7 +289,7 @@ static void setCurrentThreadName(pthread_t threadId, const char *name)
     prctl(PR_SET_NAME, (unsigned long)name, 0, 0, 0);
 #  elif defined(Q_OS_MAC)
     Q_UNUSED(threadId);
-    pthread_setname_np(name);
+    Q_UNUSED(name);
 #  elif defined(Q_OS_QNX)
     pthread_setname_np(threadId, name);
 #  endif

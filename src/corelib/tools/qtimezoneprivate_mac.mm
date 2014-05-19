@@ -120,8 +120,6 @@ QString QMacTimeZonePrivate::displayName(QTimeZone::TimeType timeType,
     case QTimeZone::ShortName :
         if (timeType == QTimeZone::DaylightTime)
             style = NSTimeZoneNameStyleShortDaylightSaving;
-        else if (timeType == QTimeZone::GenericTime)
-            style = NSTimeZoneNameStyleShortGeneric;
         else
             style = NSTimeZoneNameStyleShortStandard;
         break;
@@ -129,8 +127,6 @@ QString QMacTimeZonePrivate::displayName(QTimeZone::TimeType timeType,
     case QTimeZone::LongName :
         if (timeType == QTimeZone::DaylightTime)
             style = NSTimeZoneNameStyleDaylightSaving;
-        else if (timeType == QTimeZone::GenericTime)
-            style = NSTimeZoneNameStyleGeneric;
         else
             style = NSTimeZoneNameStyleStandard;
         break;
