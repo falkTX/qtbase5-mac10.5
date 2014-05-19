@@ -326,13 +326,7 @@ void QCocoaWindow::setVisible(bool visible)
                 // QTBUG-30266: a window should not be resizable while a transient popup is open
                 // Since this isn't a native popup, the window manager doesn't close the popup when you click outside
                 NSUInteger parentStyleMask = [parentCocoaWindow->m_nsWindow styleMask];
-                if ((m_resizableTransientParent = (parentStyleMask & NSResizableWindowMask))
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-                    && QSysInfo::QSysInfo::MacintoshVersion >= QSysInfo::MV_10_7
-                    && !([parentCocoaWindow->m_nsWindow styleMask] & NSFullScreenWindowMask)
-#endif
-                    )
-                    [parentCocoaWindow->m_nsWindow setStyleMask:parentStyleMask & ~NSResizableWindowMask];
+                m_resizableTransientParent = (parentStyleMask & NSResizableWindowMask);
             }
 
         }
@@ -412,14 +406,6 @@ void QCocoaWindow::setVisible(bool visible)
         }
         if (parentCocoaWindow && window()->type() == Qt::Popup) {
             parentCocoaWindow->m_activePopupWindow = 0;
-            if (m_resizableTransientParent
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-                && QSysInfo::QSysInfo::MacintoshVersion >= QSysInfo::MV_10_7
-                && !([parentCocoaWindow->m_nsWindow styleMask] & NSFullScreenWindowMask)
-#endif
-                )
-                // QTBUG-30266: a window should not be resizable while a transient popup is open
-                [parentCocoaWindow->m_nsWindow setStyleMask:[parentCocoaWindow->m_nsWindow styleMask] | NSResizableWindowMask];
         }
     }
 }
@@ -511,7 +497,6 @@ void QCocoaWindow::setWindowFlags(Qt::WindowFlags flags)
     if (m_nsWindow) {
         NSUInteger styleMask = windowStyleMask(flags);
         NSInteger level = this->windowLevel(flags);
-        [m_nsWindow setStyleMask:styleMask];
         [m_nsWindow setLevel:level];
         setWindowShadow(flags);
         if (!(styleMask & NSBorderlessWindowMask)) {
@@ -1072,11 +1057,6 @@ void QCocoaWindow::applyContentBorderThickness(NSWindow *window)
 {
     if (!window)
         return;
-
-    if (m_drawContentBorderGradient)
-        [window setStyleMask:[window styleMask] | NSTexturedBackgroundWindowMask];
-    else
-        [window setStyleMask:[window styleMask] & ~NSTexturedBackgroundWindowMask];
 
     if (m_topContentBorderThickness > 0) {
         [window setContentBorderThickness:m_topContentBorderThickness forEdge:NSMaxYEdge];

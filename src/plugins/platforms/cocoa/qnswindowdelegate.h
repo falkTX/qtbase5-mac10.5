@@ -46,7 +46,7 @@
 
 #include "qcocoawindow.h"
 
-@interface QNSWindowDelegate : NSObject <NSWindowDelegate>
+@interface QNSWindowDelegate : NSObject
 {
     QCocoaWindow *m_cocoaWindow;
 }
