@@ -86,7 +86,9 @@
 #endif
 
 #if defined(Q_OS_MACX)
+#include <Carbon/Carbon.h> // for SetFrontProcess
 #include <IOKit/pwr_mgt/IOPMLib.h>
+#undef verify
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -2147,8 +2149,9 @@ int QTest::qExec(QObject *testObject, int argc, char **argv)
 
 #if defined(Q_OS_MACX)
     if (macNeedsActivate) {
-        CFStringRef reasonForActivity= CFSTR("No Display Sleep");
-        IOReturn ok = IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, reasonForActivity, &powerID);
+        ProcessSerialNumber psn = { 0, kCurrentProcess };
+        SetFrontProcess(&psn);
+        IOReturn ok = IOPMAssertionCreate(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, &powerID);
 
         if (ok != kIOReturnSuccess)
             macNeedsActivate = false; // no need to release the assertion on exit.
