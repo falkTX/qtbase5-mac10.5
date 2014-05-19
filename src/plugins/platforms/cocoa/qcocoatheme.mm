@@ -259,11 +259,9 @@ QPixmap QCocoaTheme::fileIconPixmap(const QFileInfo &fileInfo, const QSizeF &siz
     if (!iconImage)
         return QPixmap();
 
-    NSRect iconRect = NSMakeRect(0, 0, size.width(), size.height());
-    NSGraphicsContext *gc = [NSGraphicsContext currentContext];
-    CGImageRef cgImage = [iconImage CGImageForProposedRect:&iconRect
-                                                   context:([gc graphicsPort] ? gc : nil)
-                                                     hints:nil];
+    CGImageSourceRef source = CGImageSourceCreateWithData((CFDataRef)[iconImage TIFFRepresentation], NULL);
+    CGImageRef cgImage = CGImageSourceCreateImageAtIndex(source, 0, NULL);
+
     QPixmap pixmap = QPixmap::fromImage(qt_mac_toQImage(cgImage));
     return pixmap;
 }

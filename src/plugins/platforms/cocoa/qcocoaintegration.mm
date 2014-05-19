@@ -121,11 +121,6 @@ void QCocoaScreen::updateGeometry()
     m_physicalSize = QSizeF(size.width, size.height);
     m_logicalDpi.first = 72;
     m_logicalDpi.second = 72;
-    CGDisplayModeRef displayMode = CGDisplayCopyDisplayMode(dpy);
-    float refresh = CGDisplayModeGetRefreshRate(displayMode);
-    CGDisplayModeRelease(displayMode);
-    if (refresh > 0)
-        m_refreshRate = refresh;
 
     // Get m_name (brand/model of the monitor)
     NSDictionary *deviceInfo = (NSDictionary *)IODisplayCreateInfoDictionary(CGDisplayIOServicePort(dpy), kIODisplayOnlyPreferredName);
@@ -193,24 +188,6 @@ QPixmap QCocoaScreen::grabWindow(WId window, int x, int y, int width, int height
     QPixmap windowPixmap(windowSize * devicePixelRatio());
     windowPixmap.fill(Qt::transparent);
 
-    for (uint i = 0; i < displayCount; ++i) {
-        const CGRect bounds = CGDisplayBounds(displays[i]);
-        int w = (width < 0 ? bounds.size.width : width) * devicePixelRatio();
-        int h = (height < 0 ? bounds.size.height : height) * devicePixelRatio();
-        QRect displayRect = QRect(x, y, w, h);
-        displayRect = displayRect.translated(qRound(-bounds.origin.x), qRound(-bounds.origin.y));
-        QCFType<CGImageRef> image = CGDisplayCreateImageForRect(displays[i],
-            CGRectMake(displayRect.x(), displayRect.y(), displayRect.width(), displayRect.height()));
-        QPixmap pix(w, h);
-        pix.fill(Qt::transparent);
-        CGRect rect = CGRectMake(0, 0, w, h);
-        CGContextRef ctx = qt_mac_cg_context(&pix);
-        qt_mac_drawCGImage(ctx, &rect, image);
-        CGContextRelease(ctx);
-
-        QPainter painter(&windowPixmap);
-        painter.drawPixmap(0, 0, pix);
-    }
     return windowPixmap;
 }
 
@@ -373,9 +350,9 @@ QPlatformWindow *QCocoaIntegration::createPlatformWindow(QWindow *window) const
     return new QCocoaWindow(window);
 }
 
-QPlatformOpenGLContext *QCocoaIntegration::createPlatformOpenGLContext(QOpenGLContext *context) const
+QPlatformOpenGLContext *QCocoaIntegration::createPlatformOpenGLContext(QOpenGLContext*) const
 {
-    return new QCocoaGLContext(context->format(), context->shareHandle());
+    return NULL;
 }
 
 QPlatformBackingStore *QCocoaIntegration::createPlatformBackingStore(QWindow *window) const

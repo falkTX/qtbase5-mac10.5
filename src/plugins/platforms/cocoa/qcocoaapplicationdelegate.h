@@ -94,18 +94,18 @@
 
 @class QT_MANGLE_NAMESPACE(QCocoaMenuLoader);
 
-@interface QT_MANGLE_NAMESPACE(QCocoaApplicationDelegate) : NSObject <NSApplicationDelegate> {
+@interface QT_MANGLE_NAMESPACE(QCocoaApplicationDelegate) : NSObject {
     bool startedQuit;
     NSMenu *dockMenu;
     QT_MANGLE_NAMESPACE(QCocoaMenuLoader) *qtMenuLoader;
-    NSObject <NSApplicationDelegate> *reflectionDelegate;
+    NSObject *reflectionDelegate;
     bool inLaunch;
 }
 + (QT_MANGLE_NAMESPACE(QCocoaApplicationDelegate)*)sharedDelegate;
 - (void)setDockMenu:(NSMenu *)newMenu;
 - (void)setMenuLoader:(QT_MANGLE_NAMESPACE(QCocoaMenuLoader)*)menuLoader;
 - (QT_MANGLE_NAMESPACE(QCocoaMenuLoader) *)menuLoader;
-- (void)setReflectionDelegate:(NSObject <NSApplicationDelegate> *)oldDelegate;
+- (void)setReflectionDelegate:(NSObject *)oldDelegate;
 - (void)getUrl:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent;
 - (void) removeAppleEventHandlers;
 @end

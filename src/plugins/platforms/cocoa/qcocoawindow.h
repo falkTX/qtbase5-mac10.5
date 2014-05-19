@@ -47,7 +47,6 @@
 #include <qpa/qplatformwindow.h>
 #include <QRect>
 
-#include "qcocoaglcontext.h"
 #include "qnsview.h"
 
 QT_FORWARD_DECLARE_CLASS(QCocoaWindow)

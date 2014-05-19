@@ -43,7 +43,6 @@
 #include "qnswindowdelegate.h"
 #include "qcocoaautoreleasepool.h"
 #include "qcocoaeventdispatcher.h"
-#include "qcocoaglcontext.h"
 #include "qcocoahelpers.h"
 #include "qnsview.h"
 #include <QtCore/qfileinfo.h>
@@ -375,11 +374,6 @@ void QCocoaWindow::setVisible(bool visible)
                 if ((window()->type() == Qt::Popup || window()->type() == Qt::Dialog || window()->type() == Qt::Tool)
                     && [m_nsWindow isKindOfClass:[NSPanel class]]) {
                     [(NSPanel *)m_nsWindow setWorksWhenModal:YES];
-                    if (!(parentCocoaWindow && window()->transientParent()->isActive()) && window()->type() == Qt::Popup) {
-                        monitor = [NSEvent addGlobalMonitorForEventsMatchingMask:NSLeftMouseDownMask|NSRightMouseDownMask|NSOtherMouseDown handler:^(NSEvent *) {
-                            QWindowSystemInterface::handleMouseEvent(window(), QPointF(-1, -1), QPointF(window()->framePosition() - QPointF(1, 1)), Qt::LeftButton);
-                        }];
-                    }
                 }
             }
         }
@@ -390,8 +384,6 @@ void QCocoaWindow::setVisible(bool visible)
             [m_contentView setHidden:NO];
     } else {
         // qDebug() << "close" << this;
-        if (m_glContext)
-            m_glContext->windowWasHidden();
         if (m_nsWindow) {
             if (m_hasModalSession) {
                 QCocoaEventDispatcher *cocoaEventDispatcher = qobject_cast<QCocoaEventDispatcher *>(QGuiApplication::instance()->eventDispatcher());
@@ -417,10 +409,6 @@ void QCocoaWindow::setVisible(bool visible)
             }
         } else {
             [m_contentView setHidden:YES];
-        }
-        if (monitor && window()->type() == Qt::Popup) {
-            [NSEvent removeMonitor:monitor];
-            monitor = nil;
         }
         if (parentCocoaWindow && window()->type() == Qt::Popup) {
             parentCocoaWindow->m_activePopupWindow = 0;
@@ -1066,13 +1054,8 @@ void QCocoaWindow::setWindowCursor(NSCursor *cursor)
     }
 }
 
-void QCocoaWindow::registerTouch(bool enable)
+void QCocoaWindow::registerTouch(bool)
 {
-    m_registerTouchCount += enable ? 1 : -1;
-    if (enable && m_registerTouchCount == 1)
-        [m_contentView setAcceptsTouchEvents:YES];
-    else if (m_registerTouchCount == 0)
-        [m_contentView setAcceptsTouchEvents:NO];
 }
 
 void QCocoaWindow::setContentBorderThickness(int topThickness, int bottomThickness)
