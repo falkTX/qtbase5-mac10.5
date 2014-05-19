@@ -11,6 +11,7 @@
 #include "qtextcodec.h"
 #include "qcompilerdetection.h"
 #include "qendian.h"
+#include "qfeatures.h"
 #include "qflags.h"
 #include "qglobal.h"
 #include "qglobalstatic.h"
