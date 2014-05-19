@@ -691,8 +691,7 @@ bool QConfFileSettingsPrivate::writePlistFile(const QString &fileName,
                                &kCFTypeDictionaryKeyCallBacks,
                                &kCFTypeDictionaryValueCallBacks);
 
-    QCFType<CFDataRef> xmlData = CFPropertyListCreateData(
-                 kCFAllocatorDefault, propertyList, kCFPropertyListXMLFormat_v1_0, 0, 0);
+    QCFType<CFDataRef> xmlData = CFPropertyListCreateXMLData(kCFAllocatorDefault, propertyList);
 
     SInt32 code;
     return CFURLWriteDataAndPropertiesToResource(urlFromFileName(fileName), xmlData, 0, &code);
